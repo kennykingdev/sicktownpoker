@@ -1,22 +1,18 @@
 import { Heading, Text } from '@chakra-ui/react';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import { FC } from 'react';
-import { getPlayerById, getPlayerIds } from '../../services/player/player';
+import { getPlayerById, getPlayerIds } from '@/services/player';
+import { PlayerWithReferrals } from 'types/Player';
 
 interface PlayerDetailProps {
-	player: {
-		id: string;
-		firstName: string;
-		lastName: string;
-	};
+	player: PlayerWithReferrals;
 }
 
 interface ParamsWithPlayerId extends ParsedUrlQuery {
 	playerId: string;
 }
 
-const PlayerDetailPage: FC<PlayerDetailProps> = ({ player }) => {
+const PlayerDetailPage: NextPage<PlayerDetailProps> = ({ player }) => {
 	if (!player) {
 		return <p>Loading...</p>;
 	}
@@ -25,6 +21,7 @@ const PlayerDetailPage: FC<PlayerDetailProps> = ({ player }) => {
 		<>
 			<Heading>Player Details</Heading>
 			<Text>{`${player.firstName} ${player.lastName}`}</Text>
+			<Text>Referred by: {`${player.referredBy?.firstName}`}</Text>
 		</>
 	);
 };
@@ -32,9 +29,13 @@ const PlayerDetailPage: FC<PlayerDetailProps> = ({ player }) => {
 export default PlayerDetailPage;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const playerIds = getPlayerIds();
+	const playerIds = await getPlayerIds();
 
-	const paths = playerIds.map((playerId) => ({ params: { playerId } }));
+	const paths = playerIds.map((playerId) => {
+		return {
+			params: { playerId: playerId.toString() },
+		};
+	});
 
 	return {
 		paths,
@@ -45,7 +46,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
 	const { playerId } = context.params as ParamsWithPlayerId;
 
-	const player = getPlayerById(playerId);
+	const player = await getPlayerById(playerId);
 
 	if (!player) {
 		return {

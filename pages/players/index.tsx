@@ -1,26 +1,24 @@
 import { Heading, Button } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { getPlayers } from '../../services/player/player';
+import { getPlayers } from '@/services/player';
+import { Player } from '@prisma/client';
+import { GetStaticProps, NextPage } from 'next';
 
 interface PlayerIndexProps {
-	players: {
-		id: string;
-		firstName: string;
-		lastName: string;
-	}[];
+	players: Player[];
 }
 
-export async function getStaticProps() {
-	const players = getPlayers();
+export const getStaticProps: GetStaticProps = async () => {
+	const players = await getPlayers();
 
 	return {
 		props: {
 			players,
 		},
 	};
-}
+};
 
-const PlayerIndex = ({ players }: PlayerIndexProps) => {
+const PlayerIndexPage: NextPage<PlayerIndexProps> = ({ players }) => {
 	return (
 		<>
 			<Heading>Players</Heading>
@@ -39,4 +37,4 @@ const PlayerIndex = ({ players }: PlayerIndexProps) => {
 	);
 };
 
-export default PlayerIndex;
+export default PlayerIndexPage;

@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id               Int      @id @default(autoincrement())
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  firstName        String   @map("first_name")
+  lastName         String   @map("last_name")
+  email            String?  @unique
+  phone            String?  @unique
+  shareContactInfo Boolean  @default(false) @map("share_contact_info")
+  isVipEligible    Boolean  @default(true) @map("is_vip_eligible")
+  referrals        Player[] @relation("PlayerReferral")
+  referredBy       Player?  @relation("PlayerReferral", fields: [referredById], references: [id])
+  referredById     Int?     @map("referred_by_id")
+
+  @@map("players")
+}
