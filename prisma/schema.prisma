@@ -1,13 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
 model Player {
@@ -21,8 +20,9 @@ model Player {
   shareContactInfo Boolean  @default(false) @map("share_contact_info")
   isVipEligible    Boolean  @default(true) @map("is_vip_eligible")
   referrals        Player[] @relation("PlayerReferral")
-  referredBy       Player?  @relation("PlayerReferral", fields: [referredById], references: [id])
+  referredBy       Player?  @relation("PlayerReferral", fields: [referredById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   referredById     Int?     @map("referred_by_id")
 
+  @@index([referredById])
   @@map("players")
 }
