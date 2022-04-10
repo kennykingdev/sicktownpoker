@@ -53,8 +53,7 @@ const seedData: PlayerDataInput = {
 
 const addPlayers = async ({ players }: PlayerDataInput) => {
 	for (const player of players) {
-		const user = await prisma.player.create({ data: player.name });
-		console.log(`Created player ID: ${user.id} - ${user.firstName} ${user.lastName}`);
+		await prisma.player.create({ data: player.name });
 	}
 };
 
@@ -72,26 +71,26 @@ const addPlayerReferrals = async ({ players }: PlayerDataInput) => {
 			return null;
 		}
 
-		const updatedPlayer = await prisma.player.update({
+		await prisma.player.update({
 			where: { id: referredPlayer.id },
 			data: { referredById: referringPlayer.id },
 			include: { referredBy: true },
 		});
-
-		console.log(
-			`${updatedPlayer.firstName} was referred by ${updatedPlayer.referredBy!.firstName}`
-		);
 	}
 };
 
 const seedPlayers = async (playerData: PlayerDataInput) => {
+	console.log('Deleting existing players...');
+	await prisma.player.deleteMany();
+
+	console.log('Resetting player ID incrementor');
+	await prisma.$queryRaw`ALTER TABLE players AUTO_INCREMENT = 1`;
+
 	console.log('Seeding players...');
 	await addPlayers(playerData);
-	console.log('Seeding players finished.');
 
 	console.log('Adding player referrals...');
 	await addPlayerReferrals(playerData);
-	console.log('Adding player referrals finished.');
 };
 
 export default seedPlayers.bind(null, seedData);
