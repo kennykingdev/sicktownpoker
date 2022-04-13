@@ -1,11 +1,11 @@
-import { Box, Flex, Image, Stack, Text, Spacer, Link } from '@chakra-ui/react';
+import { Box, Flex, Image, Stack, Text, Spacer, Link, ChakraProvider } from '@chakra-ui/react';
 import { FC } from 'react';
 import NextLink from 'next/link';
 import 'focus-visible/dist/focus-visible';
 
 const Layout: FC = ({ children }) => {
 	return (
-		<>
+		<ChakraProvider resetCSS={true}>
 			<Flex direction={['column', 'row']} maxW='full' h='100vh' p={0}>
 				<Box id='navbar' bg='gray.800' color='whiteAlpha.800' minW='150px'>
 					<Flex direction={['row', 'column']} h='100%'>
@@ -28,7 +28,7 @@ const Layout: FC = ({ children }) => {
 
 				<Box id='content'>{children}</Box>
 			</Flex>
-		</>
+		</ChakraProvider>
 	);
 };
 
