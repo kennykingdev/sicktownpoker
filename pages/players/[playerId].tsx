@@ -1,18 +1,22 @@
 import { Heading, Text } from '@chakra-ui/react';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { ParsedUrlQuery } from 'querystring';
-import { getPlayerById, getPlayerIds } from '@/services/player';
+import { NextPage } from 'next';
 import { PlayerWithReferrals } from 'types/Player';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
-interface PlayerDetailProps {
-	player: PlayerWithReferrals;
-}
+const PlayerDetailPage: NextPage = () => {
+	const router = useRouter();
+	const { playerId } = router.query;
+	const [player, setPlayer] = useState<PlayerWithReferrals>();
 
-interface ParamsWithPlayerId extends ParsedUrlQuery {
-	playerId: string;
-}
+	useEffect(() => {
+		fetch(`/api/players/${playerId}`)
+			.then((res) => res.json())
+			.then((playerData) => {
+				setPlayer(playerData.player);
+			});
+	}, [playerId]);
 
-const PlayerDetailPage: NextPage<PlayerDetailProps> = ({ player }) => {
 	if (!player) {
 		return <p>Loading...</p>;
 	}
@@ -27,36 +31,3 @@ const PlayerDetailPage: NextPage<PlayerDetailProps> = ({ player }) => {
 };
 
 export default PlayerDetailPage;
-
-export const getStaticPaths: GetStaticPaths = async () => {
-	const playerIds = await getPlayerIds();
-
-	const paths = playerIds.map((playerId) => {
-		return {
-			params: { playerId: playerId.toString() },
-		};
-	});
-
-	return {
-		paths,
-		fallback: true,
-	};
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-	const { playerId } = context.params as ParamsWithPlayerId;
-
-	const player = await getPlayerById(playerId);
-
-	if (!player) {
-		return {
-			notFound: true,
-		};
-	}
-
-	return {
-		props: {
-			player,
-		},
-	};
-};

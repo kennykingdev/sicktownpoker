@@ -1,24 +1,20 @@
 import { Heading, Button } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { getPlayers } from '@/services/player';
 import { Player } from '@prisma/client';
-import { GetStaticProps, NextPage } from 'next';
+import { NextPage } from 'next';
+import { useEffect, useState } from 'react';
 
-interface PlayerIndexProps {
-	players: Player[];
-}
+const PlayerIndexPage: NextPage = () => {
+	const [players, setPlayers] = useState<Player[]>([]);
 
-export const getStaticProps: GetStaticProps = async () => {
-	const players = await getPlayers();
+	useEffect(() => {
+		fetch('/api/players')
+			.then((res) => res.json())
+			.then((playerData) => {
+				setPlayers(playerData.players);
+			});
+	}, []);
 
-	return {
-		props: {
-			players,
-		},
-	};
-};
-
-const PlayerIndexPage: NextPage<PlayerIndexProps> = ({ players }) => {
 	return (
 		<>
 			<Heading>Players</Heading>
