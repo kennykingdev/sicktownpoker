@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getPlayerById } from '@/services/player/';
-import { PlayerWithReferrals } from 'types/Player';
+import { PlayerWithReferrals } from '@/types/Player';
 
-type Data = {
+type Response = {
 	player?: PlayerWithReferrals;
 	message?: string;
 };
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 	const {
 		query: { playerId },
 		method,
