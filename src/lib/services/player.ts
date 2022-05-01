@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import prisma from '@/lib/clients/prisma';
 import { PlayerWithReferrals, Player } from '@/types/Player';
 
 export const getPlayers = async (): Promise<Player[]> => {

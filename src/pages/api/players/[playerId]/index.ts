@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getPlayerById } from '@/services/player/';
-import { PlayerWithReferrals } from '@/types/Player';
+import { getPlayerById } from '@/services/player';
+import { PlayerWithReferrals } from '@/lib/types/Player';
 
 type Response = {
 	player?: PlayerWithReferrals;

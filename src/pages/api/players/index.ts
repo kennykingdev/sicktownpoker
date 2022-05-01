@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getPlayers } from '@/services/player/';
-import { Player } from '@/types/Player';
+import { getPlayers } from '@/services/player';
+import { Player } from '@/lib/types/Player';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<Player[]>) => {
 	switch (req.method) {
