@@ -17,9 +17,9 @@
 		"baseUrl": ".",
 		"paths": {
 			"@/services/*": ["src/lib/services/*"],
-			"@/lib/*": ["src/lib/*"],
-			"@/components/*": ["src/components/*"],
-			"@/types/*": ["src/lib/types/*"]
+			"@/*": ["src/*"],
+			"@/types/*": ["src/lib/types/*"],
+			"@/generated/*": ["src/generated/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

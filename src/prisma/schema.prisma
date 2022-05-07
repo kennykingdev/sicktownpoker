@@ -3,6 +3,12 @@ generator client {
   previewFeatures = ["referentialIntegrity"]
 }
 
+generator pothos {
+  provider     = "prisma-pothos-types"
+  clientOutput = "@prisma/client"
+  output       = "../generated/pothos-types.ts"
+}
+
 datasource db {
   provider             = "mysql"
   url                  = env("DATABASE_URL")
@@ -18,7 +24,6 @@ model Player {
   email            String?  @unique
   phone            String?  @unique
   shareContactInfo Boolean  @default(false) @map("share_contact_info")
-  isVipEligible    Boolean  @default(true) @map("is_vip_eligible")
   referrals        Player[] @relation("PlayerReferral")
   referredBy       Player?  @relation("PlayerReferral", fields: [referredById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   referredById     Int?     @map("referred_by_id")

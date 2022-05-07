@@ -1,9 +1,13 @@
+// Customize Prisma generated type to include relations
 import { Prisma } from '@prisma/client';
 
-export type { Player } from '@prisma/client';
-
-const playerWithReferrals = Prisma.validator<Prisma.PlayerArgs>()({
+const playerWithRelations = Prisma.validator<Prisma.PlayerArgs>()({
 	include: { referrals: true, referredBy: true },
 });
 
-export type PlayerWithReferrals = Prisma.PlayerGetPayload<typeof playerWithReferrals>;
+type AdditionalPlayerProperties = {
+	fullName?: string;
+};
+
+export type Player = Prisma.PlayerGetPayload<typeof playerWithRelations> &
+	AdditionalPlayerProperties;

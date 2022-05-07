@@ -1,0 +1,17 @@
+type Player {
+  email: String
+  firstName: String!
+  fullName: String!
+  id: ID!
+  lastName: String!
+  phone: String
+  referralCount: Int!
+  referrals: [Player!]!
+  referredBy: Player
+  shareContactInfo: Boolean!
+}
+
+type Query {
+  player(id: Int!): Player!
+  players: [Player!]!
+}

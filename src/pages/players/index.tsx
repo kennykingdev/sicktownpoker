@@ -4,11 +4,22 @@ import { Player } from '@/types/Player';
 import { Heading, Button } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from 'react-query';
 import { getPlayers } from '@/services/player';
+import { gql } from 'apollo-server-micro';
+import { queryClient, getPlayersIndex } from '@/lib/clients/api';
+
+const GET_PLAYERS = gql`
+	query getPlayersIndex {
+		players {
+			id
+			fullName
+			firstName
+			lastName
+		}
+	}
+`;
 
 export const getServerSideProps: GetServerSideProps = async () => {
-	const queryClient = new QueryClient();
-
-	await queryClient.prefetchQuery('players', getPlayers);
+	await queryClient.prefetchQuery('players', () => getPlayersIndex());
 
 	return {
 		props: {
@@ -23,14 +34,15 @@ const fetchPlayers = async () => {
 };
 
 const PlayerIndexPage: NextPage = () => {
-	const { isLoading, isError, data: players } = useQuery<Player[]>('players', fetchPlayers);
+	// const { isLoading, isError, data: players } = useQuery<Player[]>('players', fetchPlayers);
+	const { data } = useQuery(['players'], () => getPlayersIndex());
 
-	if (isLoading) {
-		return <span>loading...</span>;
-	}
-	if (isError) {
-		return <span>error...</span>;
-	}
+	// if (isLoading) {
+	// 	return <span>loading...</span>;
+	// }
+	// if (isError) {
+	// 	return <span>error...</span>;
+	// }
 
 	return (
 		<>
@@ -40,10 +52,10 @@ const PlayerIndexPage: NextPage = () => {
 			</NextLink>
 
 			<ul>
-				{players &&
-					players.map((player) => (
+				{data!.players &&
+					data!.players.map((player) => (
 						<li key={player.id}>
-							<NextLink href={`/players/${player.id}`}>{player.firstName}</NextLink>
+							<NextLink href={`/players/${player.id}`}>{player.fullName}</NextLink>
 						</li>
 					))}
 			</ul>
