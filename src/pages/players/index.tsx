@@ -1,19 +1,15 @@
 import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
-import { Player } from '@/types/Player';
 import { Heading, Button } from '@chakra-ui/react';
-import { dehydrate, QueryClient, useQuery } from 'react-query';
-import { getPlayers } from '@/services/player';
-import { gql } from 'apollo-server-micro';
+import { dehydrate, useQuery } from 'react-query';
+import { gql } from 'graphql-request';
 import { queryClient, getPlayersIndex } from '@/lib/clients/api';
 
-const GET_PLAYERS = gql`
+gql`
 	query getPlayersIndex {
 		players {
 			id
 			fullName
-			firstName
-			lastName
 		}
 	}
 `;
@@ -28,21 +24,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	};
 };
 
-const fetchPlayers = async () => {
-	const players = await fetch('/api/players').then((res) => res.json());
-	return players;
-};
-
 const PlayerIndexPage: NextPage = () => {
-	// const { isLoading, isError, data: players } = useQuery<Player[]>('players', fetchPlayers);
 	const { data } = useQuery(['players'], () => getPlayersIndex());
-
-	// if (isLoading) {
-	// 	return <span>loading...</span>;
-	// }
-	// if (isError) {
-	// 	return <span>error...</span>;
-	// }
 
 	return (
 		<>

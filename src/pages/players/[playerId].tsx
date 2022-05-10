@@ -1,16 +1,32 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { PlayerWithReferrals } from '@/types/Player';
 import { Heading, Text } from '@chakra-ui/react';
-import { dehydrate, QueryClient, useQuery } from 'react-query';
-import { getPlayerById } from '@/services/player';
+import { dehydrate, useQuery } from 'react-query';
+import { ParsedUrlQuery } from 'querystring';
+import { getPlayerDetails, queryClient } from '@/lib/clients/api';
+import { gql } from 'graphql-request';
+
+gql`
+	query getPlayerDetails($playerId: Int!) {
+		player(id: $playerId) {
+			fullName
+			referredBy {
+				firstName
+			}
+		}
+	}
+`;
+
+interface Params extends ParsedUrlQuery {
+	playerId: string;
+}
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-	const playerId = ctx.params?.playerId as string;
+	const { playerId } = ctx.params as Params;
 
-	const queryClient = new QueryClient();
-
-	await queryClient.prefetchQuery('player', getPlayerById.bind(null, playerId));
+	await queryClient.prefetchQuery(['player', playerId], () =>
+		getPlayerDetails({ playerId: parseInt(playerId) })
+	);
 
 	return {
 		props: {
@@ -19,37 +35,23 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	};
 };
 
-const fetchPlayerById = async (playerId: string): Promise<PlayerWithReferrals> => {
-	const playerData = await fetch(`/api/players/${playerId}`).then((res) => res.json());
-	return playerData.player;
-};
-
 const PlayerDetailPage: NextPage = () => {
 	const router = useRouter();
 	const playerId = router.query.playerId as string;
 
-	const {
-		isLoading,
-		isError,
-		data: player,
-	} = useQuery<PlayerWithReferrals>('player', fetchPlayerById.bind(null, playerId));
+	const { data } = useQuery(['player', playerId], () =>
+		getPlayerDetails({ playerId: parseInt(playerId) })
+	);
 
-	if (isLoading) {
-		return <span>loading...</span>;
-	}
-	if (isError) {
-		return <span>error...</span>;
-	}
-
-	if (!player) {
-		return <span>not found</span>;
+	if (!data) {
+		return <h1>loading...</h1>;
 	}
 
 	return (
 		<>
 			<Heading>Player Details</Heading>
-			<Text>{`${player.firstName} ${player.lastName}`}</Text>
-			<Text>Referred by: {`${player.referredBy?.firstName}`}</Text>
+			<Text>{data.player.fullName}</Text>
+			<Text>Referred by: {`${data.player.referredBy?.firstName}`}</Text>
 		</>
 	);
 };
