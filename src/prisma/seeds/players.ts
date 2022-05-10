@@ -73,8 +73,8 @@ const addPlayerReferrals = async ({ players }: PlayerDataInput) => {
 
 		await prisma.player.update({
 			where: { id: referredPlayer.id },
-			data: { referredById: referringPlayer.id },
-			include: { referredBy: true },
+			data: { referredByPlayerId: referringPlayer.id },
+			include: { referredByPlayer: true },
 		});
 	}
 };

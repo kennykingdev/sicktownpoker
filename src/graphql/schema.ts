@@ -1,13 +1,14 @@
 import SchemaBuilder from '@pothos/core';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@/generated/pothos-types';
-import { Prisma } from '@prisma/client';
+import { Player, Prisma } from '@prisma/client';
 import prisma from '@/lib/clients/prisma';
 import { Context } from './context';
 
 const builder = new SchemaBuilder<{
 	Context: Context;
 	PrismaTypes: PrismaTypes;
+	Objects: { Player: Player };
 }>({
 	plugins: [PrismaPlugin],
 	prisma: {
@@ -26,9 +27,9 @@ builder.prismaObject('Player', {
 		email: t.exposeString('email', { nullable: true }),
 		phone: t.exposeString('phone', { nullable: true }),
 		shareContactInfo: t.exposeBoolean('shareContactInfo'),
-		referredBy: t.relation('referredBy', { nullable: true }),
-		referrals: t.relation('referrals'),
-		referralCount: t.relationCount('referrals'),
+		referredByPlayer: t.relation('referredByPlayer', { nullable: true }),
+		referredPlayers: t.relation('referredPlayers'),
+		referralCount: t.relationCount('referredPlayers'),
 	}),
 });
 
@@ -36,7 +37,7 @@ builder.queryType({
 	fields: (t) => ({
 		players: t.prismaField({
 			type: ['Player'],
-			resolve: async (query, root, args, ctx, info) =>
+			resolve: async (query, _root, _args, _ctx, _info) =>
 				prisma.player.findMany({
 					...query,
 				}),
@@ -46,12 +47,70 @@ builder.queryType({
 			args: {
 				id: t.arg.int({ required: true }),
 			},
-			resolve: async (query, root, args, ctx, info) =>
+			resolve: async (query, _root, args, _ctx, _info) =>
 				prisma.player.findUnique({
 					...query,
 					rejectOnNotFound: true,
 					where: { id: args.id },
 				}),
+		}),
+	}),
+});
+
+const PlayerCreationInput = builder.inputType('PlayerCreationInput', {
+	fields: (t) => ({
+		firstName: t.string({ required: true }),
+		lastName: t.string({ required: true }),
+	}),
+});
+
+const PlayerUpdateInput = builder.inputType('PlayerUpdateInput', {
+	fields: (t) => ({
+		id: t.int({ required: true }),
+		firstName: t.string(),
+		lastName: t.string(),
+		email: t.string(),
+		phone: t.string(),
+		shareContactInfo: t.boolean(),
+		referredByPlayerId: t.int(),
+	}),
+});
+
+builder.mutationType({
+	fields: (t) => ({
+		createPlayer: t.field({
+			type: 'Player',
+			args: {
+				input: t.arg({ type: PlayerCreationInput, required: true }),
+			},
+			resolve: async (_root, args) => prisma.player.create({ data: args.input }),
+		}),
+		deletePlayer: t.field({
+			type: 'Player',
+			args: { playerId: t.arg.int({ required: true }) },
+			resolve: async (_root, args) => prisma.player.delete({ where: { id: args.playerId } }),
+		}),
+		updatePlayer: t.field({
+			type: 'Player',
+			args: {
+				input: t.arg({ type: PlayerUpdateInput, required: true }),
+			},
+			resolve: async (root, { input }) => {
+				return prisma.player.update({
+					where: {
+						id: input.id,
+					},
+					data: {
+						// make sure NOT NULL fields are not pass a null value from graphql input
+						firstName: input.firstName !== null ? input.firstName : undefined,
+						lastName: input.lastName !== null ? input.lastName : undefined,
+						email: input.email,
+						phone: input.phone,
+						shareContactInfo: input.shareContactInfo !== null ? input.shareContactInfo : undefined,
+						referredByPlayerId: input.referredByPlayerId,
+					},
+				});
+			},
 		}),
 	}),
 });

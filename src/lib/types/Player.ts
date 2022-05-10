@@ -2,7 +2,7 @@
 import { Prisma } from '@prisma/client';
 
 const playerWithRelations = Prisma.validator<Prisma.PlayerArgs>()({
-	include: { referrals: true, referredBy: true },
+	include: { referredPlayers: true, referredByPlayer: true },
 });
 
 type AdditionalPlayerProperties = {

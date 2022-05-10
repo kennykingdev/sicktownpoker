@@ -10,7 +10,7 @@ gql`
 	query getPlayerDetails($playerId: Int!) {
 		player(id: $playerId) {
 			fullName
-			referredBy {
+			referredByPlayer {
 				firstName
 			}
 		}
@@ -51,7 +51,7 @@ const PlayerDetailPage: NextPage = () => {
 		<>
 			<Heading>Player Details</Heading>
 			<Text>{data.player.fullName}</Text>
-			<Text>Referred by: {`${data.player.referredBy?.firstName}`}</Text>
+			<Text>Referred by: {`${data.player.referredByPlayer?.firstName}`}</Text>
 		</>
 	);
 };

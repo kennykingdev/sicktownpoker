@@ -1,5 +1,5 @@
 import prisma from '@/lib/clients/prisma';
-import { PlayerWithReferrals, Player } from '@/types/Player';
+import { Player } from '@/types/Player';
 
 export const getPlayers = async (): Promise<Player[]> => {
 	try {
@@ -18,14 +18,14 @@ export const getPlayerIds = async () => {
 	}
 };
 
-export const getPlayerById = async (playerId: number | string): Promise<PlayerWithReferrals> => {
+export const getPlayerById = async (playerId: number | string): Promise<Player> => {
 	// Allow us to pass playerId arg as a number or a string
 	const id = typeof playerId === 'number' ? playerId : parseInt(playerId);
 
 	try {
 		const player = await prisma.player.findUnique({
 			where: { id },
-			include: { referrals: true, referredBy: true },
+			include: { referredPlayers: true, referredByPlayer: true },
 		});
 
 		if (!player) {

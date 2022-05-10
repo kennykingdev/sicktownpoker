@@ -1,3 +1,9 @@
+type Mutation {
+  createPlayer(input: PlayerCreationInput!): Player!
+  deletePlayer(playerId: Int!): Player!
+  updatePlayer(input: PlayerUpdateInput!): Player!
+}
+
 type Player {
   email: String
   firstName: String!
@@ -6,9 +12,24 @@ type Player {
   lastName: String!
   phone: String
   referralCount: Int!
-  referrals: [Player!]!
-  referredBy: Player
+  referredByPlayer: Player
+  referredPlayers: [Player!]!
   shareContactInfo: Boolean!
+}
+
+input PlayerCreationInput {
+  firstName: String!
+  lastName: String!
+}
+
+input PlayerUpdateInput {
+  email: String
+  firstName: String
+  id: Int!
+  lastName: String
+  phone: String
+  referredByPlayerId: Int
+  shareContactInfo: Boolean
 }
 
 type Query {
