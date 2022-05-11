@@ -1,10 +1,10 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Heading, Text } from '@chakra-ui/react';
-import { dehydrate, useQuery } from 'react-query';
+import { dehydrate, QueryClient } from 'react-query';
 import { ParsedUrlQuery } from 'querystring';
-import { getPlayerDetails, queryClient } from '@/lib/clients/api';
-import { gql } from 'graphql-request';
+import { gql } from 'apollo-server-micro';
+import { useGetPlayerDetailsQuery, GetPlayerDetailsQuery } from '@/generated/graphql';
 
 gql`
 	query getPlayerDetails($playerId: Int!) {
@@ -22,36 +22,44 @@ interface Params extends ParsedUrlQuery {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-	const { playerId } = ctx.params as Params;
+	// get playerId from params as a string, convert it to int for querying
+	const { playerId: playerIdString } = ctx.params as Params;
+	const playerId = parseInt(playerIdString);
 
-	await queryClient.prefetchQuery(['player', playerId], () =>
-		getPlayerDetails({ playerId: parseInt(playerId) })
+	const queryClient = new QueryClient();
+
+	await queryClient.prefetchQuery(
+		useGetPlayerDetailsQuery.getKey({ playerId }),
+		useGetPlayerDetailsQuery.fetcher({ playerId })
 	);
 
 	return {
 		props: {
-			dehydratedState: dehydrate(queryClient),
+			dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
 		},
 	};
 };
 
 const PlayerDetailPage: NextPage = () => {
 	const router = useRouter();
-	const playerId = router.query.playerId as string;
+	const playerId = parseInt(router.query.playerId as string);
 
-	const { data } = useQuery(['player', playerId], () =>
-		getPlayerDetails({ playerId: parseInt(playerId) })
-	);
+	const { isLoading, isError, data } = useGetPlayerDetailsQuery<GetPlayerDetailsQuery>({
+		playerId,
+	});
 
-	if (!data) {
-		return <h1>loading...</h1>;
+	{
+		isLoading && <h1>Loading...</h1>;
+	}
+	{
+		isError && <h1>Something went wrong!</h1>;
 	}
 
 	return (
 		<>
 			<Heading>Player Details</Heading>
-			<Text>{data.player.fullName}</Text>
-			<Text>Referred by: {`${data.player.referredByPlayer?.firstName}`}</Text>
+			<Text>{data!.player.fullName}</Text>
+			<Text>Referred by: {`${data!.player.referredByPlayer?.firstName}`}</Text>
 		</>
 	);
 };

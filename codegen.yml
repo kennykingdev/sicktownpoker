@@ -1,6 +1,7 @@
 overwrite: true
 errorsOnly: true
-schema: http://localhost:3000/api/graphql
+watch: true
+schema: src/graphql/schema.graphql
 documents:
   - './src/components/**/*.tsx'
   - './src/pages/**/*.tsx'
@@ -12,4 +13,13 @@ generates:
     plugins:
       - typescript
       - typescript-operations
-      - typescript-graphql-request
+      - typescript-react-query
+    config:
+      pureMagicComment: true
+      exposeQueryKeys: true
+      fetcher:
+        endpoint: 'http://localhost:3000/api/graphql'
+        fetchParams:
+          headers:
+            Content-Type: application/json
+      exposeFetcher: true

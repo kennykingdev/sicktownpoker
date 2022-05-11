@@ -4,6 +4,7 @@ const { withSuperjson } = require('next-superjson');
 const nextConfig = {
 	reactStrictMode: true,
 	webpack: withSuperjson()({}).webpack,
+	poweredByHeader: false,
 };
 
 module.exports = nextConfig;

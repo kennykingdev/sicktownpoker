@@ -1,12 +1,12 @@
 import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
 import { Heading, Button } from '@chakra-ui/react';
-import { dehydrate, useQuery } from 'react-query';
-import { gql } from 'graphql-request';
-import { queryClient, getPlayersIndex } from '@/lib/clients/api';
+import { dehydrate, QueryClient } from 'react-query';
+import { gql } from 'apollo-server-micro';
+import { usePlayersIndexQuery, PlayersIndexQuery } from '@/generated/graphql';
 
 gql`
-	query getPlayersIndex {
+	query PlayersIndex {
 		players {
 			id
 			fullName
@@ -15,17 +15,25 @@ gql`
 `;
 
 export const getServerSideProps: GetServerSideProps = async () => {
-	await queryClient.prefetchQuery('players', () => getPlayersIndex());
+	const queryClient = new QueryClient();
+	await queryClient.prefetchQuery(usePlayersIndexQuery.getKey(), usePlayersIndexQuery.fetcher());
 
 	return {
 		props: {
-			dehydratedState: dehydrate(queryClient),
+			dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
 		},
 	};
 };
 
 const PlayerIndexPage: NextPage = () => {
-	const { data } = useQuery(['players'], () => getPlayersIndex());
+	const { isLoading, isError, data } = usePlayersIndexQuery<PlayersIndexQuery>();
+
+	{
+		isLoading && <h1>Loading...</h1>;
+	}
+	{
+		isError && <h1>Something went wrong!</h1>;
+	}
 
 	return (
 		<>
