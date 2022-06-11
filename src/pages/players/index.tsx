@@ -1,57 +1,60 @@
 import { GetServerSideProps, NextPage } from 'next';
-import NextLink from 'next/link';
-import { Heading, Button } from '@chakra-ui/react';
+import Link from 'next/link';
 import { dehydrate, QueryClient } from 'react-query';
 import { gql } from 'apollo-server-micro';
 import { usePlayersIndexQuery, PlayersIndexQuery } from '@/generated/graphql';
 
 gql`
-	query PlayersIndex {
-		players {
-			id
-			fullName
-		}
-	}
+  query PlayersIndex {
+    players {
+      id
+      fullName
+    }
+  }
 `;
 
 export const getServerSideProps: GetServerSideProps = async () => {
-	const queryClient = new QueryClient();
-	await queryClient.prefetchQuery(usePlayersIndexQuery.getKey(), usePlayersIndexQuery.fetcher());
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery(
+    usePlayersIndexQuery.getKey(),
+    usePlayersIndexQuery.fetcher()
+  );
 
-	return {
-		props: {
-			dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-		},
-	};
+  return {
+    props: {
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    },
+  };
 };
 
 const PlayerIndexPage: NextPage = () => {
-	const { isLoading, isError, data } = usePlayersIndexQuery<PlayersIndexQuery>();
+  const { isLoading, isError, data } =
+    usePlayersIndexQuery<PlayersIndexQuery>();
 
-	{
-		isLoading && <h1>Loading...</h1>;
-	}
-	{
-		isError && <h1>Something went wrong!</h1>;
-	}
+  {
+    isLoading && <h1>Loading...</h1>;
+  }
+  {
+    isError && <h1>Something went wrong!</h1>;
+  }
 
-	return (
-		<>
-			<Heading>Players</Heading>
-			<NextLink href='/players/create' passHref>
-				<Button>Add New Player</Button>
-			</NextLink>
+  return (
+    <>
+      <h1>Players</h1>
+      <Link href="/players/create" passHref>
+        <button>Add New Player</button>
+      </Link>
 
-			<ul>
-				{data!.players &&
-					data!.players.map((player) => (
-						<li key={player.id}>
-							<NextLink href={`/players/${player.id}`}>{player.fullName}</NextLink>
-						</li>
-					))}
-			</ul>
-		</>
-	);
+      <ul>
+        {data!.players &&
+          data!.players.map((player) => (
+            <li key={player.id}>
+              <Link href={`/players/${player.id}`}>{player.fullName}</Link>
+            </li>
+          ))}
+      </ul>
+    </>
+  );
 };
 
 export default PlayerIndexPage;

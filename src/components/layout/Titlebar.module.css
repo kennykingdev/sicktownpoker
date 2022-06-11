@@ -1,0 +1,21 @@
+.titlebar {
+  background-color: black;
+  color: white;
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.titlebar h1 {
+  margin: 0px 30px;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+}
+
+.session {
+  display: flex;
+  align-items: center;
+}
