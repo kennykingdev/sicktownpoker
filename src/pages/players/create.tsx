@@ -1,20 +1,10 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { gql } from 'apollo-server-micro';
 import {
   PlayerCreationInput,
   useCreatePlayerMutation,
 } from '@/generated/graphql';
 import { useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-
-gql`
-  mutation CreatePlayer($input: PlayerCreationInput!) {
-    createPlayer(input: $input) {
-      id
-      fullName
-    }
-  }
-`;
 
 const CreatePlayer = () => {
   const router = useRouter();

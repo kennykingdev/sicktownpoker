@@ -1,10 +1,7 @@
-overwrite: true
 errorsOnly: true
 watch: true
 schema: src/graphql/schema.graphql
-documents:
-  - './src/components/**/*.tsx'
-  - './src/pages/**/*.tsx'
+documents: './src/graphql/operations/*.graphql'
 generates:
   ./src/graphql/schema.graphql:
     plugins:

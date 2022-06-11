@@ -1,17 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
 import { dehydrate, QueryClient } from 'react-query';
-import { gql } from 'apollo-server-micro';
 import { usePlayersIndexQuery, PlayersIndexQuery } from '@/generated/graphql';
-
-gql`
-  query PlayersIndex {
-    players {
-      id
-      fullName
-    }
-  }
-`;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const queryClient = new QueryClient();

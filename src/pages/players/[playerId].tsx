@@ -2,22 +2,10 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { dehydrate, QueryClient } from 'react-query';
 import { ParsedUrlQuery } from 'querystring';
-import { gql } from 'apollo-server-micro';
 import {
   useGetPlayerDetailsQuery,
   GetPlayerDetailsQuery,
 } from '@/generated/graphql';
-
-gql`
-  query getPlayerDetails($playerId: Int!) {
-    player(id: $playerId) {
-      fullName
-      referredByPlayer {
-        firstName
-      }
-    }
-  }
-`;
 
 interface Params extends ParsedUrlQuery {
   playerId: string;
