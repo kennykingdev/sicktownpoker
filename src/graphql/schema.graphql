@@ -1,6 +1,6 @@
 type Mutation {
   createPlayer(input: PlayerCreationInput!): Player!
-  deletePlayer(playerId: Int!): Player!
+  deletePlayer(playerId: String!): Player!
   updatePlayer(input: PlayerUpdateInput!): Player!
 }
 
@@ -18,21 +18,25 @@ type Player {
 }
 
 input PlayerCreationInput {
+  email: String
   firstName: String!
   lastName: String!
+  phone: String
+  referredByPlayerId: String
+  shareContactInfo: Boolean
 }
 
 input PlayerUpdateInput {
   email: String
   firstName: String
-  id: Int!
+  id: String!
   lastName: String
   phone: String
-  referredByPlayerId: Int
+  referredByPlayerId: String
   shareContactInfo: Boolean
 }
 
 type Query {
-  player(id: Int!): Player!
+  player(id: String!): Player!
   players: [Player!]!
 }

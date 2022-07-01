@@ -8,15 +8,15 @@ import {
   useDeletePlayerMutation,
   usePlayersIndexQuery,
 } from '@/generated/graphql';
+import Link from 'next/link';
 
 interface Params extends ParsedUrlQuery {
   playerId: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // get playerId from params as a string, convert it to int for querying
-  const { playerId: playerIdString } = ctx.params as Params;
-  const playerId = parseInt(playerIdString);
+  // get playerId from params as a string
+  const { playerId } = ctx.params as Params;
 
   const queryClient = new QueryClient();
 
@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const PlayerDetailPage: NextPage = () => {
   const router = useRouter();
-  const playerId = parseInt(router.query.playerId as string);
+  const playerId = router.query.playerId as string;
   const queryClient = useQueryClient();
 
   const { isLoading, isError, data } =
@@ -67,7 +67,16 @@ const PlayerDetailPage: NextPage = () => {
     <>
       <h1>Player Details</h1>
       <p>{data!.player.fullName}</p>
-      <p>Referred by: {`${data!.player.referredByPlayer?.firstName}`}</p>
+      <p>Email: {data!.player.email}</p>
+      <p>Phone: {data!.player.phone}</p>
+      <p>
+        Share Contact Info?: {data?.player.shareContactInfo ? 'true' : 'false'}
+      </p>
+      <p>Referred by: {data!.player.referredByPlayer?.fullName}</p>
+      <p>Referrals: {data?.player.referralCount}</p>
+      <Link href={`/players/${data?.player.id}/edit`} passHref>
+        <button>Edit Player</button>
+      </Link>
       <button onClick={deletePlayerHandler}>Delete Player</button>
     </>
   );

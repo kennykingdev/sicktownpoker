@@ -1,9 +1,0 @@
-query getPlayerDetails($playerId: Int!) {
-  player(id: $playerId) {
-    id
-    fullName
-    referredByPlayer {
-      firstName
-    }
-  }
-}

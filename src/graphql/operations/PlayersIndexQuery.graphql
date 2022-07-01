@@ -1,6 +1,0 @@
-query PlayersIndex {
-  players {
-    id
-    fullName
-  }
-}

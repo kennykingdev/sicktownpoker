@@ -16,7 +16,7 @@ datasource db {
 }
 
 model Player {
-  id                 Int      @id @default(autoincrement())
+  id                 String   @id @default(cuid())
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
   firstName          String   @map("first_name")
@@ -26,7 +26,7 @@ model Player {
   shareContactInfo   Boolean  @default(false) @map("share_contact_info")
   referredPlayers    Player[] @relation("PlayerReferral")
   referredByPlayer   Player?  @relation("PlayerReferral", fields: [referredByPlayerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  referredByPlayerId Int?     @map("referred_by_player_id")
+  referredByPlayerId String?  @map("referred_by_player_id")
 
   @@index([referredByPlayerId])
   @@map("players")
