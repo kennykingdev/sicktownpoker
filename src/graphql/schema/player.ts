@@ -1,21 +1,4 @@
-import SchemaBuilder from '@pothos/core';
-import PrismaPlugin from '@pothos/plugin-prisma';
-import type PrismaTypes from '@/generated/pothos-types';
-import { Player, Prisma } from '@prisma/client';
-import prisma from '@/lib/clients/prisma';
-import { Context } from './context';
-
-const builder = new SchemaBuilder<{
-  Context: Context;
-  PrismaTypes: PrismaTypes;
-  Objects: { Player: Player };
-}>({
-  plugins: [PrismaPlugin],
-  prisma: {
-    client: prisma,
-    dmmf: (prisma as unknown as { _dmmf: Prisma.DMMF.Document })._dmmf,
-  },
-});
+import builder from '../builder';
 
 builder.prismaObject('Player', {
   findUnique: (player) => ({ id: player.id }),
@@ -35,29 +18,25 @@ builder.prismaObject('Player', {
   }),
 });
 
-builder.queryType({
-  fields: (t) => ({
-    players: t.prismaField({
-      type: ['Player'],
-      resolve: async (query, _root, _args, _ctx, _info) =>
-        prisma.player.findMany({
-          ...query,
-        }),
-    }),
-    player: t.prismaField({
-      type: 'Player',
-      args: {
-        id: t.arg.string({ required: true }),
-      },
-      resolve: async (query, _root, args, _ctx, _info) =>
-        prisma.player.findUnique({
-          ...query,
-          rejectOnNotFound: true,
-          where: { id: args.id },
-        }),
-    }),
+builder.queryFields((t) => ({
+  players: t.prismaField({
+    type: ['Player'],
+    resolve: async (query, _root, _args, _ctx, _info) =>
+      prisma.player.findMany({ ...query }),
   }),
-});
+  player: t.prismaField({
+    type: 'Player',
+    args: {
+      id: t.arg.string({ required: true }),
+    },
+    resolve: (query, _root, args, _ctx, _info) =>
+      prisma.player.findUnique({
+        ...query,
+        rejectOnNotFound: true,
+        where: { id: args.id },
+      }),
+  }),
+}));
 
 const PlayerCreationInput = builder.inputType('PlayerCreationInput', {
   fields: (t) => ({
@@ -145,7 +124,3 @@ builder.mutationType({
     }),
   }),
 });
-
-const schema = builder.toSchema({});
-
-export default schema;

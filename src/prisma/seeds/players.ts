@@ -119,7 +119,7 @@ const addPlayerReferrals = async ({ players }: PlayerDataInput) => {
     });
 
     if (!referredPlayer || !referringPlayer) {
-      return null;
+      return;
     }
 
     await prisma.player.update({
