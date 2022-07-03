@@ -1,7 +1,15 @@
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
 type Mutation {
-  createPlayer(input: PlayerCreationInput!): Player!
+  createPlayer(input: PlayerCreateInput!): Player!
+  createTournament(input: TournamentCreateInput!): Tournament!
   deletePlayer(playerId: String!): Player!
+  deleteTournament(tournamentId: String!): Tournament!
   updatePlayer(input: PlayerUpdateInput!): Player!
+  updateTournament(input: TournamentUpdateInput!): Tournament!
 }
 
 type Player {
@@ -17,7 +25,7 @@ type Player {
   shareContactInfo: Boolean!
 }
 
-input PlayerCreationInput {
+input PlayerCreateInput {
   email: String
   firstName: String!
   lastName: String!
@@ -39,4 +47,35 @@ input PlayerUpdateInput {
 type Query {
   player(id: String!): Player!
   players: [Player!]!
+  tournament(id: String!): Tournament!
+  tournaments: [Tournament!]!
+}
+
+type Tournament {
+  TournamentStatus: String!
+  createdAt: Date!
+  date: Date
+  id: ID!
+  name: String
+  updatedAt: Date!
+}
+
+input TournamentCreateInput {
+  date: Date
+  name: String
+  status: TournamentStatus
+}
+
+enum TournamentStatus {
+  COMPLETE
+  PLANNING
+  POSTED
+  RUNNING
+}
+
+input TournamentUpdateInput {
+  date: Date
+  id: String!
+  name: String
+  status: TournamentStatus
 }

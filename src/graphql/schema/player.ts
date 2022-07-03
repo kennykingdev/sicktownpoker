@@ -38,7 +38,7 @@ builder.queryFields((t) => ({
   }),
 }));
 
-const PlayerCreationInput = builder.inputType('PlayerCreationInput', {
+const PlayerCreateInput = builder.inputType('PlayerCreateInput', {
   fields: (t) => ({
     firstName: t.string({ required: true }),
     lastName: t.string({ required: true }),
@@ -61,66 +61,62 @@ const PlayerUpdateInput = builder.inputType('PlayerUpdateInput', {
   }),
 });
 
-builder.mutationType({
-  fields: (t) => ({
-    createPlayer: t.field({
-      type: 'Player',
-      args: {
-        input: t.arg({ type: PlayerCreationInput, required: true }),
-      },
-      resolve: async (_root, args) => {
-        const {
-          firstName,
-          lastName,
-          email,
-          phone,
-          shareContactInfo,
-          referredByPlayerId,
-        } = args.input;
+builder.mutationFields((t) => ({
+  createPlayer: t.field({
+    type: 'Player',
+    args: {
+      input: t.arg({ type: PlayerCreateInput, required: true }),
+    },
+    resolve: async (_root, args) => {
+      const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        shareContactInfo,
+        referredByPlayerId,
+      } = args.input;
 
-        return prisma.player.create({
-          data: {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phone: phone,
-            shareContactInfo:
-              shareContactInfo !== null ? shareContactInfo : undefined,
-            referredByPlayerId: referredByPlayerId,
-          },
-        });
-      },
-    }),
-    deletePlayer: t.field({
-      type: 'Player',
-      args: { playerId: t.arg.string({ required: true }) },
-      resolve: async (_root, args) =>
-        prisma.player.delete({ where: { id: args.playerId } }),
-    }),
-    updatePlayer: t.field({
-      type: 'Player',
-      args: {
-        input: t.arg({ type: PlayerUpdateInput, required: true }),
-      },
-      resolve: async (root, { input }) => {
-        return prisma.player.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            // make sure NOT NULL fields are not pass a null value from graphql input
-            firstName: input.firstName !== null ? input.firstName : undefined,
-            lastName: input.lastName !== null ? input.lastName : undefined,
-            email: input.email,
-            phone: input.phone,
-            shareContactInfo:
-              input.shareContactInfo !== null
-                ? input.shareContactInfo
-                : undefined,
-            referredByPlayerId: input.referredByPlayerId,
-          },
-        });
-      },
-    }),
+      return prisma.player.create({
+        data: {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: phone,
+          shareContactInfo:
+            shareContactInfo !== null ? shareContactInfo : undefined,
+          referredByPlayerId: referredByPlayerId,
+        },
+      });
+    },
   }),
-});
+  deletePlayer: t.field({
+    type: 'Player',
+    args: { playerId: t.arg.string({ required: true }) },
+    resolve: async (_root, args) =>
+      prisma.player.delete({ where: { id: args.playerId } }),
+  }),
+  updatePlayer: t.field({
+    type: 'Player',
+    args: {
+      input: t.arg({ type: PlayerUpdateInput, required: true }),
+    },
+    resolve: async (root, { input }) => {
+      return prisma.player.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          firstName: input.firstName ? input.firstName : undefined,
+          lastName: input.lastName ? input.lastName : undefined,
+          email: input.email,
+          phone: input.phone,
+          shareContactInfo: input.shareContactInfo
+            ? input.shareContactInfo
+            : undefined,
+          referredByPlayerId: input.referredByPlayerId,
+        },
+      });
+    },
+  }),
+}));

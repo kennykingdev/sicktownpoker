@@ -31,3 +31,21 @@ model Player {
   @@index([referredByPlayerId])
   @@map("players")
 }
+
+model Tournament {
+  id        String           @id @default(cuid())
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+  date      DateTime?
+  name      String?
+  status    TournamentStatus @default(PLANNING)
+
+  @@map("tournaments")
+}
+
+enum TournamentStatus {
+  PLANNING
+  POSTED
+  RUNNING
+  COMPLETE
+}
