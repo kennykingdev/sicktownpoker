@@ -20,3 +20,8 @@ generates:
           headers:
             Content-Type: application/json
       exposeFetcher: true
+      strictScalars: true
+      scalars: 
+        Date: Date
+      allowEnumStringTypes: true
+      enumsAsConst: true

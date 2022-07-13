@@ -33,12 +33,12 @@ model Player {
 }
 
 model Tournament {
-  id        String           @id @default(cuid())
-  createdAt DateTime         @default(now()) @map("created_at")
-  updatedAt DateTime         @updatedAt @map("updated_at")
-  date      DateTime?
-  name      String?
-  status    TournamentStatus @default(PLANNING)
+  id             String           @id @default(cuid())
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  scheduledStart DateTime         @default(now())
+  name           String
+  status         TournamentStatus @default(PLANNING)
 
   @@map("tournaments")
 }

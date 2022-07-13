@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import {
-  PlayerCreationInput,
+  PlayerCreateInput,
   PlayersIndexQuery,
   useCreatePlayerMutation,
   usePlayersIndexQuery,
@@ -38,9 +38,9 @@ const CreatePlayer = () => {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<PlayerCreationInput>();
+  } = useForm<PlayerCreateInput>();
 
-  const onSubmit: SubmitHandler<PlayerCreationInput> = (newPlayerFormData) => {
+  const onSubmit: SubmitHandler<PlayerCreateInput> = (newPlayerFormData) => {
     removeEmptyFormFields(newPlayerFormData);
 
     createPlayerMutation.mutate(

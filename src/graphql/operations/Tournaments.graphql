@@ -1,0 +1,40 @@
+fragment FullTournamentDetails on Tournament {
+  id
+  name
+  scheduledStart
+  status
+  createdAt
+  updatedAt
+}
+
+query TournamentsIndex {
+  tournaments {
+    id
+    name
+    status
+  }
+}
+
+query getTournamentDetails($tournamentId: String!) {
+  tournament(id: $tournamentId) {
+    ...FullTournamentDetails
+  }
+}
+
+mutation CreateTournament($input: TournamentCreateInput!) {
+  createTournament(input: $input) {
+    ...FullTournamentDetails
+  }
+}
+
+mutation UpdateTournament($input: TournamentUpdateInput!) {
+  updateTournament(input: $input) {
+    ...FullTournamentDetails
+  }
+}
+
+mutation DeleteTournament($tournamentId: String!) {
+  deleteTournament(tournamentId: $tournamentId) {
+    id
+  }
+}

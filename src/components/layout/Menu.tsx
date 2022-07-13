@@ -7,7 +7,7 @@ const Menu = () => {
       <nav className={styles.menu}>
         <ul>
           <MenuItem url="/" title="Home" />
-          <MenuItem url="/" title="Results" />
+          <MenuItem url="/results" title="Results" />
           <MenuItem url="/players" title="Players" />
           <MenuItem url="/" title="Admin" />
         </ul>

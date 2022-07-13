@@ -52,18 +52,17 @@ type Query {
 }
 
 type Tournament {
-  TournamentStatus: String!
   createdAt: Date!
-  date: Date
   id: ID!
-  name: String
+  name: String!
+  scheduledStart: Date!
+  status: TournamentStatus!
   updatedAt: Date!
 }
 
 input TournamentCreateInput {
-  date: Date
-  name: String
-  status: TournamentStatus
+  name: String!
+  scheduledStart: Date!
 }
 
 enum TournamentStatus {
@@ -74,8 +73,8 @@ enum TournamentStatus {
 }
 
 input TournamentUpdateInput {
-  date: Date
   id: String!
   name: String
+  scheduledStart: Date
   status: TournamentStatus
 }

@@ -11,13 +11,15 @@ builder.prismaObject('Tournament', {
     id: t.exposeID('id'),
     createdAt: t.field({ type: 'Date', resolve: (tourn) => tourn.createdAt }),
     updatedAt: t.field({ type: 'Date', resolve: (tourn) => tourn.updatedAt }),
-    date: t.field({
+    scheduledStart: t.field({
       type: 'Date',
-      resolve: (tourn) => tourn.date,
-      nullable: true,
+      resolve: (tourn) => tourn.scheduledStart,
     }),
-    name: t.exposeString('name', { nullable: true }),
-    TournamentStatus: t.exposeString('status'),
+    name: t.exposeString('name'),
+    status: t.field({
+      type: TournamentStatus,
+      resolve: (tourn) => tourn.status,
+    }),
   }),
 });
 
@@ -42,16 +44,15 @@ builder.queryFields((t) => ({
 
 const TournamentCreateInput = builder.inputType('TournamentCreateInput', {
   fields: (t) => ({
-    date: t.field({ type: 'Date' }),
-    name: t.string(),
-    status: t.field({ type: TournamentStatus }),
+    scheduledStart: t.field({ type: 'Date', required: true }),
+    name: t.string({ required: true }),
   }),
 });
 
 const TournamentUpdateInput = builder.inputType('TournamentUpdateInput', {
   fields: (t) => ({
     id: t.string({ required: true }),
-    date: t.field({ type: 'Date' }),
+    scheduledStart: t.field({ type: 'Date' }),
     name: t.string(),
     status: t.field({ type: TournamentStatus }),
   }),
@@ -64,13 +65,12 @@ builder.mutationFields((t) => ({
       input: t.arg({ type: TournamentCreateInput, required: true }),
     },
     resolve: async (_root, args) => {
-      const { date, name, status } = args.input;
+      const { scheduledStart, name } = args.input;
 
       return prisma.tournament.create({
         data: {
-          date,
+          scheduledStart: new Date(scheduledStart),
           name,
-          status: status ? status : undefined,
         },
       });
     },
@@ -86,8 +86,10 @@ builder.mutationFields((t) => ({
           id: input.id,
         },
         data: {
-          name: input.name,
-          date: input.date,
+          name: input.name ? input.name : undefined,
+          scheduledStart: input.scheduledStart
+            ? input.scheduledStart
+            : undefined,
           status: input.status ? input.status : undefined,
         },
       });

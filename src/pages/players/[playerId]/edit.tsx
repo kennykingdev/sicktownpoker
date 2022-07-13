@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { QueryClient, dehydrate, useQueryClient } from 'react-query';
 import { ParsedUrlQuery } from 'querystring';
@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const EditPlayer = () => {
+const EditPlayerPage: NextPage = () => {
   const router = useRouter();
   const playerId = router.query.playerId as string;
 
@@ -56,7 +56,7 @@ const EditPlayer = () => {
       queryClient.invalidateQueries(
         useGetPlayerDetailsQuery.getKey({ playerId })
       );
-      queryClient.invalidateQueries('PlayersIndex');
+      queryClient.invalidateQueries(usePlayersIndexQuery.getKey());
     },
   });
 
@@ -135,6 +135,7 @@ const EditPlayer = () => {
       </>
     );
   }
+  return <h1>Something&apos;s broken...</h1>;
 };
 
-export default EditPlayer;
+export default EditPlayerPage;

@@ -11,7 +11,7 @@ const seedData: SeedData = [];
 
 for (let i = 1; i <= 10; i++) {
   seedData.push({
-    date: date,
+    scheduledStart: date,
     name: `Game ${i}`,
     status: 'PLANNING',
   });

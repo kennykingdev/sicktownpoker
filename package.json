@@ -22,13 +22,13 @@
 		"next-superjson": "^0.0.3",
 		"normalize.css": "^8.0.1",
 		"react": "^18.2.0",
+		"react-datepicker": "^4.8.0",
 		"react-dom": "^18.2.0",
 		"react-hook-form": "^7.33.1",
 		"react-query": "^3.39.1",
 		"superjson": "^1.9.1"
 	},
 	"devDependencies": {
-		"@boost/module": "^3.1.0",
 		"@graphql-codegen/cli": "^2.6.4",
 		"@graphql-codegen/schema-ast": "^2.4.1",
 		"@graphql-codegen/typescript": "^2.5.1",
@@ -37,6 +37,7 @@
 		"@types/micro-cors": "^0.1.2",
 		"@types/node": "18.0.0",
 		"@types/react": "18.0.14",
+		"@types/react-datepicker": "^4.4.2",
 		"@types/react-dom": "18.0.5",
 		"eslint": "8.19.0",
 		"eslint-config-next": "12.2.0",
