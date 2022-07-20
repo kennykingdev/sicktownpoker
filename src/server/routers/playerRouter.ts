@@ -54,13 +54,13 @@ export const playerRouter = createRouter()
     },
   })
   .mutation('create', {
-    input: validate.player,
+    input: validate.player.createInput,
     resolve({ input, ctx }) {
-      return ctx.prisma.player.create({ data: input });
+      return ctx.prisma.player.create({ data: input.data });
     },
   })
   .mutation('update', {
-    input: validate.playerUpdateInput,
+    input: validate.player.updateInput,
     resolve({ input, ctx }) {
       return ctx.prisma.player.update({
         where: { id: input.id },

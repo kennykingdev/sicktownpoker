@@ -34,13 +34,13 @@ export const tournamentRouter = createRouter()
     },
   })
   .mutation('create', {
-    input: validate.tournament,
+    input: validate.tournament.createInput,
     resolve({ input, ctx }) {
-      return ctx.prisma.tournament.create({ data: input });
+      return ctx.prisma.tournament.create({ data: input.data });
     },
   })
   .mutation('update', {
-    input: validate.tournamentUpdateInput,
+    input: validate.tournament.updateInput,
     resolve({ input, ctx }) {
       return ctx.prisma.tournament.update({
         where: { id: input.id },

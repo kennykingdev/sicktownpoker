@@ -18,12 +18,7 @@ const TournamentUpdatePage: NextPage = () => {
   >({
     defaultValues: {
       id: tournamentId,
-      data: {
-        ...tournament.data,
-        scheduledStart: tournament.data?.scheduledStart
-          ? tournament.data.scheduledStart.toLocaleString()
-          : undefined,
-      },
+      data: { ...tournament.data },
     },
   });
 
@@ -62,7 +57,7 @@ const TournamentUpdatePage: NextPage = () => {
             <DatePicker
               placeholderText="Select Date"
               onChange={(date) => field.onChange(date)}
-              selected={field.value ? new Date(field.value) : new Date()}
+              selected={field.value}
               showTimeSelect
               timeCaption="Time"
               dateFormat="MMMM d, yyyy h:mm aa"

@@ -36,22 +36,23 @@ const TournamentCreatePage: NextPage = () => {
       <h1>Tournament Creation</h1>
 
       <form onSubmit={handleSubmit(onSubmit)}>
+        <input type="hidden" value={'Planning'} {...register('data.status')} />
         <label htmlFor="name">Tournament Name:</label>
         <input
           type="text"
           id="name"
-          {...register('name', { required: true, minLength: 1 })}
+          {...register('data.name', { required: true, minLength: 1 })}
         />
         <br />
         <label htmlFor="scheduledStart">Scheduled Date/Time</label>
         <Controller
           control={control}
-          name="scheduledStart"
+          name="data.scheduledStart"
           render={({ field }) => (
             <DatePicker
               placeholderText="Select Date"
               onChange={(date) => field.onChange(date)}
-              selected={field.value ? new Date(field.value) : new Date()}
+              selected={field.value}
               showTimeSelect
               timeCaption="Time"
               dateFormat="MMMM d, yyyy h:mm aa"

@@ -1,4 +1,3 @@
-import type { AppProps } from 'next/app';
 import Layout from '@/components/layout/Layout';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 import { useState } from 'react';
@@ -6,6 +5,7 @@ import '../styles.css';
 import { withTRPC } from '@trpc/next';
 import { AppType } from 'next/dist/shared/lib/utils';
 import { AppRouter } from '../server/routers/appRouter';
+import superjson from 'superjson';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const [queryClient] = useState(() => new QueryClient());
@@ -31,6 +31,7 @@ export default withTRPC<AppRouter>({
       : 'http://localhost:3000/api/trpc';
 
     return {
+      transformer: superjson,
       url,
       /**
        * @link https://react-query.tanstack.com/reference/QueryClient

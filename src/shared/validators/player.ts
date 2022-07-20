@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { PHONE_REGEX } from '@/constants';
 import { id } from './shared';
 
-export const player = z.object({
+export const data = z.object({
   firstName: z
     .string({ required_error: 'First name is required' })
     .trim()
@@ -28,7 +28,13 @@ export const player = z.object({
   referredByPlayerId: id.nullable().or(z.literal('')),
 });
 
-export const playerUpdateInput = z.object({
+export type PlayerDataSchema = z.infer<typeof data>;
+
+export const updateInput = z.object({
   id: id,
-  data: player,
+  data: data.partial(),
+});
+
+export const createInput = z.object({
+  data: data,
 });

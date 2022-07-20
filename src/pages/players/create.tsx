@@ -40,24 +40,27 @@ const CreatePlayerPage: NextPage = () => {
         <input
           type="text"
           id="firstName"
-          {...register('firstName', { required: true, minLength: 1 })}
+          {...register('data.firstName', { required: true, minLength: 1 })}
         />
         <br />
         <label htmlFor="lastName">Last name:</label>
         <input
           type="text"
           id="lastName"
-          {...register('lastName', { required: true, minLength: 1 })}
+          {...register('data.lastName', { required: true, minLength: 1 })}
         />
         <br />
         <label htmlFor="email">Email:</label>
-        <input type="email" id="email" {...register('email')} />
+        <input type="email" id="email" {...register('data.email')} />
         <br />
         <label htmlFor="phone">Phone:</label>
-        <input type="tel" id="phone" {...register('phone')} />
+        <input type="tel" id="phone" {...register('data.phone')} />
         <br />
         <label htmlFor="referredByPlayerId">Referred by: </label>
-        <select id="referredByPlayerId" {...register('referredByPlayerId')}>
+        <select
+          id="referredByPlayerId"
+          {...register('data.referredByPlayerId')}
+        >
           <option></option>
           {playerIndex.data.map((player) => (
             <option key={player.id} value={player.id}>
