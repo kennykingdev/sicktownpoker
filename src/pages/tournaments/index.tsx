@@ -1,34 +1,12 @@
-import {
-  TournamentsIndexQuery,
-  useTournamentsIndexQuery,
-} from '@/generated/graphql';
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage } from 'next';
+import { trpc } from '@/utils/trpc';
 import Link from 'next/link';
-import { dehydrate, QueryClient } from 'react-query';
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(
-    useTournamentsIndexQuery.getKey(),
-    useTournamentsIndexQuery.fetcher()
-  );
-
-  return {
-    props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-    },
-  };
-};
 
 const TournamentIndexPage: NextPage = () => {
-  const { isLoading, isError, data } =
-    useTournamentsIndexQuery<TournamentsIndexQuery>();
+  const tournamentIndex = trpc.useQuery(['tournament.index']);
 
-  {
-    isLoading && <h1>Loading...</h1>;
-  }
-  {
-    isError && <h1>Something went wrong!</h1>;
+  if (!tournamentIndex.data) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -39,14 +17,13 @@ const TournamentIndexPage: NextPage = () => {
       </Link>
 
       <ul>
-        {data?.tournaments &&
-          data.tournaments.map((tournament) => (
-            <li key={tournament.id}>
-              <Link href={`/tournaments/${tournament.id}`}>
-                {tournament.name}
-              </Link>
-            </li>
-          ))}
+        {tournamentIndex.data.map((tournament) => (
+          <li key={tournament.id}>
+            <Link href={`/tournaments/${tournament.id}`}>
+              {tournament.name}
+            </Link>
+          </li>
+        ))}
       </ul>
     </>
   );

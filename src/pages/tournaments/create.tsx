@@ -1,38 +1,31 @@
-import {
-  TournamentCreateInput,
-  useCreateTournamentMutation,
-  useTournamentsIndexQuery,
-} from '@/generated/graphql';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { SubmitHandler, useForm, Controller } from 'react-hook-form';
-import { useQueryClient } from 'react-query';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { InferMutationInput, trpc } from '@/utils/trpc';
 
 const TournamentCreatePage: NextPage = () => {
   const router = useRouter();
 
-  const queryClient = useQueryClient();
-  const createTournamentMutation = useCreateTournamentMutation({
-    onSuccess: () =>
-      queryClient.invalidateQueries(useTournamentsIndexQuery.getKey()),
-  });
+  const createTournament = trpc.useMutation('tournament.create');
 
   const {
     handleSubmit,
     register,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<TournamentCreateInput>();
+  } = useForm<InferMutationInput<'tournament.create'>>();
 
-  const onSubmit: SubmitHandler<TournamentCreateInput> = (
+  const onSubmit: SubmitHandler<InferMutationInput<'tournament.create'>> = (
     newTournamentFormData
   ) => {
-    createTournamentMutation.mutate(
-      { input: newTournamentFormData },
+    createTournament.mutate(
+      { ...newTournamentFormData },
       {
-        onSuccess: () => router.push('/tournaments'),
+        onSuccess: () => {
+          router.push('/tournaments');
+        },
         onError: () => alert('Something went wrong'),
       }
     );
@@ -58,7 +51,7 @@ const TournamentCreatePage: NextPage = () => {
             <DatePicker
               placeholderText="Select Date"
               onChange={(date) => field.onChange(date)}
-              selected={field.value}
+              selected={field.value ? new Date(field.value) : new Date()}
               showTimeSelect
               timeCaption="Time"
               dateFormat="MMMM d, yyyy h:mm aa"
