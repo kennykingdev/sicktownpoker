@@ -4,49 +4,12 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 scalar Date
 
 type Mutation {
-  createPlayer(input: PlayerCreateInput!): Player!
   createTournament(input: TournamentCreateInput!): Tournament!
-  deletePlayer(playerId: String!): Player!
   deleteTournament(tournamentId: String!): Tournament!
-  updatePlayer(input: PlayerUpdateInput!): Player!
   updateTournament(input: TournamentUpdateInput!): Tournament!
 }
 
-type Player {
-  email: String
-  firstName: String!
-  fullName: String!
-  id: ID!
-  lastName: String!
-  phone: String
-  referralCount: Int!
-  referredByPlayer: Player
-  referredPlayers: [Player!]!
-  shareContactInfo: Boolean!
-}
-
-input PlayerCreateInput {
-  email: String
-  firstName: String!
-  lastName: String!
-  phone: String
-  referredByPlayerId: String
-  shareContactInfo: Boolean
-}
-
-input PlayerUpdateInput {
-  email: String
-  firstName: String
-  id: String!
-  lastName: String
-  phone: String
-  referredByPlayerId: String
-  shareContactInfo: Boolean
-}
-
 type Query {
-  player(id: String!): Player!
-  players: [Player!]!
   tournament(id: String!): Tournament!
   tournaments: [Tournament!]!
 }

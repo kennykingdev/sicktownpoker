@@ -1,80 +1,44 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { dehydrate, QueryClient, useQueryClient } from 'react-query';
-import { ParsedUrlQuery } from 'querystring';
-import {
-  useGetPlayerDetailsQuery,
-  GetPlayerDetailsQuery,
-  useDeletePlayerMutation,
-  usePlayersIndexQuery,
-} from '@/generated/graphql';
+import { trpc } from '@/utils/trpc';
 import Link from 'next/link';
-
-interface Params extends ParsedUrlQuery {
-  playerId: string;
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  // get playerId from params as a string
-  const { playerId } = ctx.params as Params;
-
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(
-    useGetPlayerDetailsQuery.getKey({ playerId }),
-    useGetPlayerDetailsQuery.fetcher({ playerId })
-  );
-
-  return {
-    props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-    },
-  };
-};
 
 const PlayerDetailPage: NextPage = () => {
   const router = useRouter();
   const playerId = router.query.playerId as string;
-  const queryClient = useQueryClient();
 
-  const { isLoading, isError, data } =
-    useGetPlayerDetailsQuery<GetPlayerDetailsQuery>({
-      playerId,
-    });
-
-  const deleteMutation = useDeletePlayerMutation({
-    onSuccess: () => {
-      queryClient.invalidateQueries(usePlayersIndexQuery.getKey());
-      queryClient.invalidateQueries(
-        useGetPlayerDetailsQuery.getKey({ playerId })
-      );
-    },
-  });
+  const player = trpc.useQuery(['player.byId', { id: playerId }]);
+  const deletePlayer = trpc.useMutation('player.delete');
 
   const deletePlayerHandler = () => {
-    deleteMutation.mutate({ playerId });
-    router.push('/players');
+    deletePlayer.mutate(
+      { id: playerId },
+      {
+        onSuccess: () => router.push('/players'),
+        onError: () => alert('Something went wrong'),
+      }
+    );
   };
 
-  {
-    isLoading && <h1>Loading...</h1>;
-  }
-  {
-    isError && <h1>Something went wrong!</h1>;
+  if (!player.data) {
+    return <div>Loading...</div>;
   }
 
   return (
     <>
       <h1>Player Details</h1>
-      <p>{data?.player.fullName}</p>
-      <p>Email: {data?.player.email}</p>
-      <p>Phone: {data?.player.phone}</p>
+      <p>{`${player.data.firstName} ${player.data.lastName}`}</p>
+      <p>Email: {player.data.email}</p>
+      <p>Phone: {player.data.phone}</p>
       <p>
-        Share Contact Info?: {data?.player.shareContactInfo ? 'true' : 'false'}
+        Share Contact Info?: {player.data.shareContactInfo ? 'true' : 'false'}
       </p>
-      <p>Referred by: {data?.player.referredByPlayer?.fullName}</p>
-      <p>Referrals: {data?.player.referralCount}</p>
-      <Link href={`/players/${data?.player.id}/edit`} passHref>
+      <p>
+        Referred by:{' '}
+        {`${player.data.referredByPlayer?.firstName} ${player.data.referredByPlayer?.lastName}`}
+      </p>
+      <p>Referrals: {player.data._count.referredPlayers}</p>
+      <Link href={`/players/${player.data.id}/edit`} passHref>
         <button>Edit Player</button>
       </Link>
       <button onClick={deletePlayerHandler}>Delete Player</button>
