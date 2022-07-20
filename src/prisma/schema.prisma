@@ -3,12 +3,6 @@ generator client {
   previewFeatures = ["referentialIntegrity"]
 }
 
-generator pothos {
-  provider     = "prisma-pothos-types"
-  clientOutput = "@prisma/client"
-  output       = "../generated/pothos-types.ts"
-}
-
 datasource db {
   provider             = "mysql"
   url                  = env("DATABASE_URL")
@@ -38,14 +32,14 @@ model Tournament {
   updatedAt      DateTime         @updatedAt @map("updated_at")
   scheduledStart DateTime         @default(now())
   name           String
-  status         TournamentStatus @default(PLANNING)
+  status         TournamentStatus @default(Planning)
 
   @@map("tournaments")
 }
 
 enum TournamentStatus {
-  PLANNING
-  POSTED
-  RUNNING
-  COMPLETE
+  Planning
+  Posted
+  Running
+  Complete
 }

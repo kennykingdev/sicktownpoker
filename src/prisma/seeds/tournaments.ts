@@ -13,7 +13,7 @@ for (let i = 1; i <= 10; i++) {
   seedData.push({
     scheduledStart: date,
     name: `Game ${i}`,
-    status: 'PLANNING',
+    status: 'Planning',
   });
 
   date = add(date, { weeks: 2 });

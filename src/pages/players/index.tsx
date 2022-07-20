@@ -1,31 +1,12 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import Link from 'next/link';
-import { dehydrate, QueryClient } from 'react-query';
-import { usePlayersIndexQuery, PlayersIndexQuery } from '@/generated/graphql';
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(
-    usePlayersIndexQuery.getKey(),
-    usePlayersIndexQuery.fetcher()
-  );
-
-  return {
-    props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-    },
-  };
-};
+import { trpc } from '@/utils/trpc';
 
 const PlayerIndexPage: NextPage = () => {
-  const { isLoading, isError, data } =
-    usePlayersIndexQuery<PlayersIndexQuery>();
+  const players = trpc.useQuery(['player.index']);
 
-  {
-    isLoading && <h1>Loading...</h1>;
-  }
-  {
-    isError && <h1>Something went wrong!</h1>;
+  if (!players.data) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -36,12 +17,13 @@ const PlayerIndexPage: NextPage = () => {
       </Link>
 
       <ul>
-        {data!.players &&
-          data!.players.map((player) => (
-            <li key={player.id}>
-              <Link href={`/players/${player.id}`}>{player.fullName}</Link>
-            </li>
-          ))}
+        {players.data.map((player) => (
+          <li key={player.id}>
+            <Link
+              href={`/players/${player.id}`}
+            >{`${player.firstName} ${player.lastName}`}</Link>
+          </li>
+        ))}
       </ul>
     </>
   );
