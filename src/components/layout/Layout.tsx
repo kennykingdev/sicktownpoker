@@ -4,7 +4,8 @@ import styles from './Layout.module.css';
 import Menu from './Menu';
 import Titlebar from './Titlebar';
 
-const Layout: FC = ({ children }) => {
+// TODO: fix props type
+const Layout = ({ children }: any) => {
   return (
     <>
       <main className={styles.main}>

@@ -36,8 +36,8 @@ const PlayerIndexPage: NextPage = () => {
       </Link>
 
       <ul>
-        {data!.players &&
-          data!.players.map((player) => (
+        {data?.players &&
+          data.players.map((player) => (
             <li key={player.id}>
               <Link href={`/players/${player.id}`}>{player.fullName}</Link>
             </li>

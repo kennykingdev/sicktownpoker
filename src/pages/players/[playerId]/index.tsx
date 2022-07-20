@@ -66,13 +66,13 @@ const PlayerDetailPage: NextPage = () => {
   return (
     <>
       <h1>Player Details</h1>
-      <p>{data!.player.fullName}</p>
-      <p>Email: {data!.player.email}</p>
-      <p>Phone: {data!.player.phone}</p>
+      <p>{data?.player.fullName}</p>
+      <p>Email: {data?.player.email}</p>
+      <p>Phone: {data?.player.phone}</p>
       <p>
         Share Contact Info?: {data?.player.shareContactInfo ? 'true' : 'false'}
       </p>
-      <p>Referred by: {data!.player.referredByPlayer?.fullName}</p>
+      <p>Referred by: {data?.player.referredByPlayer?.fullName}</p>
       <p>Referrals: {data?.player.referralCount}</p>
       <Link href={`/players/${data?.player.id}/edit`} passHref>
         <button>Edit Player</button>
