@@ -11,6 +11,7 @@
 		"generate": "graphql-codegen"
 	},
 	"dependencies": {
+		"@hookform/resolvers": "^2.9.6",
 		"@prisma/client": "^4.1.0",
 		"@trpc/client": "^9.26.2",
 		"@trpc/next": "^9.26.2",

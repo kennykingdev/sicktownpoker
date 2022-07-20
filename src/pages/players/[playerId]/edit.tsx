@@ -1,7 +1,10 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { InferMutationInput, trpc } from '@/utils/trpc';
+import { trpc } from '@/utils/trpc';
+import { PlayerDataSchema } from '@/shared/validators/player';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { validate } from '@/shared/validators';
 
 const EditPlayerPage: NextPage = () => {
   const router = useRouter();
@@ -15,21 +18,14 @@ const EditPlayerPage: NextPage = () => {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<InferMutationInput<'player.update'>>({
-    defaultValues: {
-      id: playerId,
-      data: {
-        ...player.data,
-        referredByPlayerId: player.data?.referredByPlayer?.id,
-      },
-    },
+  } = useForm<PlayerDataSchema>({
+    defaultValues: { ...player.data },
+    resolver: zodResolver(validate.player.data),
   });
 
-  const onSubmit: SubmitHandler<InferMutationInput<'player.update'>> = (
-    updatePlayerFormData
-  ) => {
+  const onSubmit: SubmitHandler<PlayerDataSchema> = (updatePlayerFormData) => {
     updatePlayer.mutate(
-      { id: playerId, data: updatePlayerFormData.data },
+      { id: playerId, data: updatePlayerFormData },
       {
         onSuccess: () => router.push('/players'),
         onError: () => alert('Something went wrong'),
@@ -46,30 +42,23 @@ const EditPlayerPage: NextPage = () => {
       <h1>Player Edit Page</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="firstName">First name:</label>
-        <input
-          type="text"
-          id="firstName"
-          {...register('data.firstName', { required: true, minLength: 1 })}
-        />
+        <input type="text" id="firstName" {...register('firstName')} />
+        <p>{errors.firstName?.message}</p>
         <br />
         <label htmlFor="lastName">Last name:</label>
-        <input
-          type="text"
-          id="lastName"
-          {...register('data.lastName', { required: true, minLength: 1 })}
-        />
+        <input type="text" id="lastName" {...register('lastName')} />
+        <p>{errors.lastName?.message}</p>
         <br />
         <label htmlFor="email">Email:</label>
-        <input type="email" id="email" {...register('data.email')} />
+        <input type="email" id="email" {...register('email')} />
+        <p>{errors.email?.message}</p>
         <br />
         <label htmlFor="phone">Phone:</label>
-        <input type="tel" id="phone" {...register('data.phone')} />
+        <input type="tel" id="phone" {...register('phone')} />
+        <p>{errors.phone?.message}</p>
         <br />
         <label htmlFor="referredByPlayerId">Referred by: </label>
-        <select
-          id="referredByPlayerId"
-          {...register('data.referredByPlayerId')}
-        >
+        <select id="referredByPlayerId" {...register('referredByPlayerId')}>
           <option></option>
           {playerIndex.data.map((existingPlayer) => (
             <option key={existingPlayer.id} value={existingPlayer.id}>
@@ -77,6 +66,7 @@ const EditPlayerPage: NextPage = () => {
             </option>
           ))}
         </select>
+        <p>{errors.referredByPlayerId?.message}</p>
 
         <br />
         <input type="submit" />

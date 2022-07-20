@@ -3,14 +3,8 @@ import { PHONE_REGEX } from '@/constants';
 import { id } from './shared';
 
 export const data = z.object({
-  firstName: z
-    .string({ required_error: 'First name is required' })
-    .trim()
-    .min(1),
-  lastName: z
-    .string({ required_error: 'First name is required' })
-    .trim()
-    .min(1),
+  firstName: z.string().trim().min(1, { message: 'First name is required' }),
+  lastName: z.string().trim().min(1, { message: 'Last name is required' }),
   email: z
     .string()
     .trim()

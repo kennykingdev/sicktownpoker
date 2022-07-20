@@ -3,7 +3,10 @@ import { useRouter } from 'next/router';
 import { SubmitHandler, useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { InferMutationInput, trpc } from '@/utils/trpc';
+import { trpc } from '@/utils/trpc';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { validate } from '@/shared/validators';
+import { TournamentDataSchema } from '@/shared/validators/tournament';
 
 const TournamentCreatePage: NextPage = () => {
   const router = useRouter();
@@ -15,13 +18,15 @@ const TournamentCreatePage: NextPage = () => {
     register,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<InferMutationInput<'tournament.create'>>();
+  } = useForm<TournamentDataSchema>({
+    resolver: zodResolver(validate.tournament.data),
+  });
 
-  const onSubmit: SubmitHandler<InferMutationInput<'tournament.create'>> = (
+  const onSubmit: SubmitHandler<TournamentDataSchema> = (
     newTournamentFormData
   ) => {
     createTournament.mutate(
-      { ...newTournamentFormData },
+      { data: newTournamentFormData },
       {
         onSuccess: () => {
           router.push('/tournaments');
@@ -36,18 +41,15 @@ const TournamentCreatePage: NextPage = () => {
       <h1>Tournament Creation</h1>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <input type="hidden" value={'Planning'} {...register('data.status')} />
+        <input type="hidden" value={'Planning'} {...register('status')} />
         <label htmlFor="name">Tournament Name:</label>
-        <input
-          type="text"
-          id="name"
-          {...register('data.name', { required: true, minLength: 1 })}
-        />
+        <input type="text" id="name" {...register('name')} />
+        <p>{errors.name?.message}</p>
         <br />
         <label htmlFor="scheduledStart">Scheduled Date/Time</label>
         <Controller
           control={control}
-          name="data.scheduledStart"
+          name="scheduledStart"
           render={({ field }) => (
             <DatePicker
               placeholderText="Select Date"
@@ -59,6 +61,7 @@ const TournamentCreatePage: NextPage = () => {
             />
           )}
         />
+        <p>{errors.scheduledStart?.message}</p>
         <br />
         <button type="submit">Submit</button>
       </form>

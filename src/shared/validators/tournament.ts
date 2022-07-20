@@ -4,11 +4,7 @@ import { id } from './shared';
 
 export const data = z.object({
   scheduledStart: z.date(),
-  // scheduledStart: z
-  //   .string()
-  //   .trim()
-  //   .transform((string) => new Date(string)),
-  name: z.string().trim().min(1),
+  name: z.string().trim().min(1, { message: 'Tournament name is required' }),
   status: z.nativeEnum(TournamentStatus),
 });
 

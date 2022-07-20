@@ -56,7 +56,13 @@ export const playerRouter = createRouter()
   .mutation('create', {
     input: validate.player.createInput,
     resolve({ input, ctx }) {
-      return ctx.prisma.player.create({ data: input.data });
+      return ctx.prisma.player.create({
+        data: {
+          ...input.data,
+          email: input.data.email === '' ? null : input.data.email,
+          phone: input.data.phone === '' ? null : input.data.phone,
+        },
+      });
     },
   })
   .mutation('update', {
@@ -64,7 +70,11 @@ export const playerRouter = createRouter()
     resolve({ input, ctx }) {
       return ctx.prisma.player.update({
         where: { id: input.id },
-        data: input.data,
+        data: {
+          ...input.data,
+          email: input.data.email === '' ? null : input.data.email,
+          phone: input.data.phone === '' ? null : input.data.phone,
+        },
       });
     },
   })

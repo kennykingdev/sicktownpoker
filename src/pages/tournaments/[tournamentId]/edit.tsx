@@ -4,7 +4,10 @@ import { useRouter } from 'next/router';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { InferMutationInput, trpc } from '@/utils/trpc';
+import { trpc } from '@/utils/trpc';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { validate } from '@/shared/validators';
+import { TournamentDataSchema } from '@/shared/validators/tournament';
 
 const TournamentUpdatePage: NextPage = () => {
   const router = useRouter();
@@ -13,20 +16,21 @@ const TournamentUpdatePage: NextPage = () => {
   const tournament = trpc.useQuery(['tournament.byId', { id: tournamentId }]);
   const updateTournament = trpc.useMutation('tournament.update');
 
-  const { handleSubmit, register, control } = useForm<
-    InferMutationInput<'tournament.update'>
-  >({
-    defaultValues: {
-      id: tournamentId,
-      data: { ...tournament.data },
-    },
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors },
+  } = useForm<TournamentDataSchema>({
+    defaultValues: { ...tournament.data },
+    resolver: zodResolver(validate.tournament.data),
   });
 
-  const onSubmit: SubmitHandler<InferMutationInput<'tournament.update'>> = (
+  const onSubmit: SubmitHandler<TournamentDataSchema> = (
     updateTournamentFormData
   ) => {
     updateTournament.mutate(
-      { id: tournamentId, data: { ...updateTournamentFormData.data } },
+      { id: tournamentId, data: updateTournamentFormData },
       {
         onSuccess: () => router.push('/tournaments'),
         onError: () => alert('Something went wrong'),
@@ -46,13 +50,14 @@ const TournamentUpdatePage: NextPage = () => {
         <input
           type="text"
           id="name"
-          {...register('data.name', { required: true, minLength: 1 })}
+          {...register('name', { required: true, minLength: 1 })}
         />
+        <p>{errors.name?.message}</p>
         <br />
         <label htmlFor="scheduledStart">Scheduled Date/Time</label>
         <Controller
           control={control}
-          name="data.scheduledStart"
+          name="scheduledStart"
           render={({ field }) => (
             <DatePicker
               placeholderText="Select Date"
@@ -64,9 +69,10 @@ const TournamentUpdatePage: NextPage = () => {
             />
           )}
         />
+        <p>{errors.scheduledStart?.message}</p>
         <br />
         <label htmlFor="status">Status: </label>
-        <select id="status" {...register('data.status')}>
+        <select id="status" {...register('status')}>
           {Object.keys(TournamentStatus).map((key: string) => {
             return (
               <option key={key}>
@@ -75,6 +81,7 @@ const TournamentUpdatePage: NextPage = () => {
             );
           })}
         </select>
+        <p>{errors.status?.message}</p>
 
         <br />
         <button type="submit">Submit</button>
