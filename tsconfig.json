@@ -21,6 +21,12 @@
     "target": "ES2022",
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
+
+    /* Paths */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./app/*"]
+    }
   }
 }
