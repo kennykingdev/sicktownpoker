@@ -1,10 +1,10 @@
-// app/router.tsx
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export function createRouter() {
   const router = createTanStackRouter({
     routeTree,
+    // restore scroll position of the page when navigating between routes
     scrollRestoration: true,
   });
 
