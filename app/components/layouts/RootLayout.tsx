@@ -1,34 +1,28 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Menu,
-  X,
-  Home,
-  Users,
-  Settings,
-  User,
-  LogOut,
-  Moon,
-  Sun,
-} from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { Home, LogOutIcon, Menu, Settings, User, Users, X } from "lucide-react";
+import logo from "/favicon.ico";
 
-const navigationItems = [
+const navigationMenuItems = [
   { name: "Home", href: "/", icon: Home },
   { name: "Players", href: "/players", icon: Users },
   { name: "Admin", href: "/admin", icon: Settings },
 ];
 
-export default function RootLayoutClient({
+const profileMenuItems = [
+  { name: "Profile", href: "/profile", icon: User },
+  { name: "Log Out", href: "/logout", icon: LogOutIcon },
+];
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -36,188 +30,130 @@ export default function RootLayoutClient({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Desktop Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center">
-          {/* Logo and Title */}
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <span className="text-sm font-bold">STP</span>
-            </div>
-            <span className="font-semibold text-lg">Sicktown Poker</span>
-          </div>
+    <div className="min-h-screen bg-neutral-200">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full bg-neutral-900 text-neutral-100 px-2">
+        {/* Header Items Container */}
+        <div className="flex flex-1  h-16 items-center justify-between mx-auto container gap-4">
+          {/* Brand */}
+          <Link to="/" className="flex items-center space-x-3">
+            <img src={logo} className="h-12 w-12" />
+            <span>Sicktown Poker</span>
+          </Link>
 
-          {/* Desktop Navigation - Centered */}
-          <nav className="hidden lg:flex flex-1 justify-center">
-            <div className="flex items-center space-x-6">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
-                  >
-                    <Icon className="h-4 w-4" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center justify-between gap-4">
+            {navigationMenuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="flex gap-1 font-medium  text-neutral-300 hover:text-white items-center"
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Desktop Profile Menu */}
-          <div className="hidden lg:flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => alert("theme changed")}
-            >
-              {true ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-              {/* {theme === "dark" ? ( <Sun className="h-4 w-4" />) : ( <Moon className="h-4 w-4" />)} */}
-              <span className="sr-only">Toggle theme</span>
-            </Button>
+          <div className="hidden md:flex items-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
+                  size="sm"
+                  className="text-neutral-300 hover:text-white hover:bg-neutral-800 mr-2"
                 >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src="/placeholder.svg?height=32&width=32"
-                      alt="User"
-                    />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
+                  <User className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">John Doe</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      john@example.com
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-48">
+                {profileMenuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <DropdownMenuItem key={item.name}>
+                      <Icon className="h-4 w-4 mr-2" />
+                      {item.name}
+                    </DropdownMenuItem>
+                  );
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center lg:hidden ml-auto">
+          <div className="md:hidden">
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={
-                mobileMenuOpen
-                  ? "Close navigation menu"
-                  : "Open navigation menu"
-              }
+              className="h-5 w-5"
             >
               {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5" />
               ) : (
-                <Menu className="h-6 w-6" />
+                <Menu className="h-5 w-5" />
               )}
             </Button>
           </div>
         </div>
-      </header>
-
-      {/* Mobile Menu (outside of Sheet component) */}
-      <div
-        className={`fixed inset-x-0 top-16 z-40 bg-background border-b transform transition-transform duration-300 ease-in-out ${
-          mobileMenuOpen ? "translate-y-0" : "-translate-y-full"
-        }`}
-        style={{ height: "calc(100vh - 4rem)" }}
-      >
-        <div className="flex flex-col h-full overflow-y-auto">
-          <nav className="flex-1 px-6 pt-4">
-            <div className="space-y-2">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Icon className="h-5 w-5" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
-          </nav>
-          <div className="border-t p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Avatar className="h-10 w-10">
-                <AvatarImage
-                  src="/placeholder.svg?height=40&width=40"
-                  alt="User"
-                />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">John Doe</p>
-                <p className="text-sm text-muted-foreground">
-                  john@example.com
-                </p>
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-neutral-800 border-t border-neutral-500">
+            <div className="px-4 py-6 space-y-4">
+              {/* Mobile Menu Nav */}
+              <div className="space-y-3">
+                {navigationMenuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className="block text-base font-medium text-neutral-300 hover:text-white"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <div className="flex">
+                        <Icon className="h-4 w-4 mr-2" />
+                        {item.name}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              <DropdownMenuSeparator />
+              {/* Mobile Profile Menu */}
+              <div className="pt-4 space-y-3">
+                {profileMenuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className="block text-base font-medium text-neutral-300 hover:text-white"
+                      // className="flex"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <div className="flex">
+                        <Icon className="h-4 w-4 mr-2" />
+                        {item.name}
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
-            <div className="space-y-2">
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3"
-                onClick={() => alert("theme changed")}
-              >
-                {true ? (
-                  <Sun className="h-4 w-4" />
-                ) : (
-                  <Moon className="h-4 w-4" />
-                )}
-                {/* {theme === "dark" ? ( <Sun className="h-4 w-4" />) : ( <Moon className="h-4 w-4" />)} */}
-                Toggle theme
-              </Button>
-              <Button variant="ghost" className="w-full justify-start gap-3">
-                <User className="h-4 w-4" />
-                Profile
-              </Button>
-              <Button variant="ghost" className="w-full justify-start gap-3">
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </Button>
-            </div>
           </div>
-        </div>
-      </div>
+        )}
+      </header>
 
       {/* Main Content Area */}
-      <main className="flex-1">
-        <div className="container mx-auto px-4 py-6 lg:px-8">{children}</div>
+      <main className="flex-1 h-[calc(100vh-4rem)]">
+        <div className="mx-auto p-2 h-full container bg-neutral-100">
+          {children}
+        </div>
       </main>
     </div>
   );
