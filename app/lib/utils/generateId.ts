@@ -10,6 +10,6 @@ const idAlphabet = "346789ABCDEFGHJKLMNPQRTUVWXYabcdefghijkmnpqrtwxyz";
 const idLength = 12;
 
 // Will be used for validation
-export const idRegex = new RegExp(`^[${idAlphabet}]{${idLength}$`);
+export const idRegex = new RegExp(`^[${idAlphabet}]{${idLength}}$`);
 
 export const generateId = customAlphabet(idAlphabet, idLength);
