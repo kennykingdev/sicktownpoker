@@ -1,10 +1,5 @@
-import { generateId } from "@/lib/utils";
-import type {
-  Id,
-  Player,
-  EditPlayerInput,
-  CreatePlayerInput,
-} from "@/lib/models";
+import { generateId } from "@/utils";
+import type { Id, Player, EditPlayerInput, CreatePlayerInput } from "@/models";
 
 const DUMMY_PLAYERS: Player[] = [];
 
@@ -35,7 +30,10 @@ const players = {
     return DUMMY_PLAYERS.find((player) => player.id === playerId);
   },
   create: (player: CreatePlayerInput) => {
-    DUMMY_PLAYERS.push({ id: generateId(), ...player });
+    const newPlayerId = generateId();
+    DUMMY_PLAYERS.push({ id: newPlayerId, ...player });
+    return { playerId: newPlayerId }
+
   },
   edit: ({ id: playerId, ...updatedData }: EditPlayerInput) => {
     console.log("do stuff to edit a player");

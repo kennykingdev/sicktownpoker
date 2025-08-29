@@ -6,8 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+  Button,
+} from "@/components/ui";
 import { Home, LogOutIcon, Menu, Settings, User, Users, X } from "lucide-react";
 import logo from "/favicon.ico";
 

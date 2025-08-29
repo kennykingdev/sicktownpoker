@@ -5,14 +5,14 @@ export const playerSchema = z.object({
   id: idSchema,
   firstName: z.string().trim().min(1).max(50),
   lastName: z.string().trim().min(1).max(50),
-  email: z.email().nullish(),
+  email: z.email().optional(),
   phone: z
     .string()
     .trim()
     .length(10)
     // start with a 10 character string, make sure it's only numbers
     .regex(/^[0-9]+$/)
-    .nullish(),
+    .optional(),
 });
 export type Player = z.infer<typeof playerSchema>;
 
