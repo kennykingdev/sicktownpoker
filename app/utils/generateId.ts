@@ -6,10 +6,10 @@ import { customAlphabet } from "nanoid";
 // to have a 1% chance of collision.
 
 // custom alphabet is intended to have no lookalike characters
-const idAlphabet = "346789ABCDEFGHJKLMNPQRTUVWXYabcdefghijkmnpqrtwxyz";
-const idLength = 12;
+const ID_ALPHABET = "346789ABCDEFGHJKLMNPQRTUVWXYabcdefghijkmnpqrtwxyz";
+export const ID_LENGTH = 12;
 
 // Will be used for validation
-export const idRegex = new RegExp(`^[${idAlphabet}]{${idLength}}$`);
+export const idRegex = new RegExp(`^[${ID_ALPHABET}]{${ID_LENGTH}}$`);
 
-export const generateId = customAlphabet(idAlphabet, idLength);
+export const generateId = customAlphabet(ID_ALPHABET, ID_LENGTH);
